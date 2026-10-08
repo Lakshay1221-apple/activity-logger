@@ -1,3 +1,5 @@
+import './activity-tests';
+
 import assert from 'node:assert';
 import test, { describe } from 'node:test';
 import { getMoodConfig, getMoodLabel, MOOD_CONFIG } from '../src/constants/mood';

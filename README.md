@@ -1,56 +1,121 @@
-# Welcome to your Expo app 👋
+# Activity Logger
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Activity Logger is an offline-first Expo app for recording activities, reflecting on your day, and reviewing how you spend your time. Activity records are stored locally on the device in SQLite.
 
-## Get started
+## Features
 
-1. Install dependencies
+- Daily dashboard with tracked time, activity count, category summary, and recent entries.
+- Create, edit, review, and delete activities with a title, category, date, start/end times, notes, and comma-separated tags.
+- Chronological history grouped by day and individual activity detail pages.
+- Lightweight insights for daily totals, category totals, and the most-used category.
+- Local SQLite persistence; data stays on the device and does not require an account or network connection.
+- Light and dark theme palettes follow the device appearance.
+- Existing journal tools are available from the Journal tab, including text, mood, and offline voice transcription, plus JSON export.
 
-   ```bash
-   npm install
-   ```
+## Screenshots
 
-2. Start the app
+Screenshots have not been captured yet.
 
-   ```bash
-   npx expo start
-   ```
+## Tech stack
 
-In the output, you'll find options to open the app in a
+- React Native 0.86 and React 19
+- Expo SDK 57 and Expo Router (file-based routes)
+- TypeScript with strict checking
+- `expo-sqlite` for on-device persistence
+- `whisper.rn` with a bundled tiny model for offline voice transcription in the existing journal feature
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Requirements
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- Node.js 22.13 or newer (Expo SDK 57 requirement)
+- npm
+- For native device builds: Android Studio/Android SDK or Xcode 26.4+ on macOS
+- A development build is needed for native modules such as SQLite and Whisper; Expo Go may not include all required native modules.
 
-## Get a fresh project
-
-When you're ready, run:
+## Installation
 
 ```bash
-npm run reset-project
+git clone https://github.com/learnershakil/activity-logger.git
+cd activity-logger
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Running the app
 
-### Other setup steps
+Start the Expo development server:
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+```bash
+npx expo start
+```
 
-## Learn more
+Then use the Expo CLI prompts to open a configured simulator/device. To run a native development build locally:
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+npx expo run:android
+npx expo run:ios
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+The iOS command requires macOS and Xcode. Web can be started with `npm run web`, though native SQLite and audio capabilities may differ on web.
 
-## Join the community
+## Project structure
 
-Join our community of developers creating universal apps.
+```text
+src/
+├── app/                   # Expo Router dashboard, history, insights, and activity routes
+├── components/            # Reusable navigation and interface components
+├── database/              # SQLite connection and existing journal schema
+├── features/activities/   # Activity model, validation, calculations, repository, hook
+├── repositories/          # Existing journal persistence
+├── services/              # Existing voice, transcription, and export services
+├── theme/                 # Shared light/dark palettes and provider
+├── types/                 # Existing journal and speech types
+└── utils/                 # Date and ID utilities
+__tests__/                  # Node-based TypeScript business-logic tests
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Architecture
+
+Activity screens use Expo Router and shared components. Activity validation, duration calculations, grouping, and statistics live in `src/features/activities/`. `ActivityRepository` owns the SQLite table and persistence operations; the `useActivities` hook provides loading/error state and refreshable CRUD operations to screens.
+
+```text
+Expo Router screens → activity hook and domain utilities → ActivityRepository → expo-sqlite
+```
+
+A separate `activities` table is created with `CREATE TABLE IF NOT EXISTS`, preserving the existing journal table and data.
+
+## Testing
+
+```bash
+npm test
+npm run lint
+npm run typecheck
+```
+
+The tests cover activity duration (including midnight crossing), validation, date grouping, summary statistics, service create/delete behavior, and the existing date, mood, and export-safety checks.
+
+## Development
+
+Useful commands:
+
+```bash
+npm run start       # Start Expo
+npm run android     # Build/run the Android app
+npm run ios         # Build/run the iOS app
+npm run web         # Start web target
+npm run lint        # Expo ESLint configuration
+npm run typecheck   # TypeScript strict check
+npm test            # TypeScript business-logic tests
+```
+
+Follow `AGENTS.md` for project-specific Expo guidance. Install Expo SDK packages with `npx expo install <package>` so versions match the SDK.
+
+## Contributing
+
+1. Create a focused feature branch.
+2. Keep changes mobile-first and compatible with Expo SDK 57.
+3. Add or update tests for behavior changes.
+4. Run lint, tests, and typecheck before opening a pull request.
+5. Describe tested platforms and any limitations accurately.
+
+## License
+
+This project includes the MIT license. See [LICENSE](LICENSE).

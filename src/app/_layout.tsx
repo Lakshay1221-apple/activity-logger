@@ -24,6 +24,11 @@ function RootLayoutContent() {
         }}
       >
         <Stack.Screen name="index" />
+        <Stack.Screen name="history" />
+        <Stack.Screen name="insights" />
+        <Stack.Screen name="journal" />
+        <Stack.Screen name="activity/new" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="activity/[id]" />
       </Stack>
     </>
   );
